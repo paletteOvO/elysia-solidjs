@@ -8,43 +8,42 @@ import { generateHydrationScript, renderToStringAsync } from "solid-js/web";
 import type { JSXElement } from "solid-js";
 
 export const hydratePageScript = async (componentPath: string) => {
-	const hydrationScript =
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		((await build(hydrationConfig(componentPath))) as any).output[0].code;
-	return hydrationScript;
+	const entryScript = hydrationEntryTemplate(componentPath);
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	return ((await build(hydrationConfig(entryScript))) as any).output[0].code;
 };
 
 export const renderPage = async <S>(
-	component: (context?: S) => JSXElement,
-	context: S,
+	component: (props: S) => JSXElement,
+	props: S,
+	hash?: string,
+	hydrationScript?: string,
 ) => {
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	const ctx = context as any;
-	const basePath = ctx.path.endsWith("/") ? ctx.path : `${ctx.path}/`;
-	return `
-	<!DOCTYPE html>
-	<html lang="en">
-	<head>
-		<title>🔥 Solid SSR 🔥</title>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="/styles.css" />
-		<base href="${basePath}" target="_self">
+	const path = "./index.html";
+	const file = Bun.file(path);
+	const text = await file.text();
+	return text.replace(
+		"<!-- body -->",
+		`
 		${generateHydrationScript()}
-	</head>
-	<body>${await renderToStringAsync(() => component(context))}</body>
-	<script async src="_hydrate.js" ></script>
-	</html>
-`;
+		${await renderToStringAsync(() => component(props))}
+		<script id="_hydration_prop" type="application/json">${JSON.stringify(props)}</script>
+		${
+			hash
+				? `<script async src="/_hydrate.js?hash=${hash}" ></script>`
+				: `<script async type="application/javascript">${hydrationScript}</script>`
+		}
+		`,
+	);
 };
 
 export const hydrationEntryTemplate = (componentPath: string) => `
     import { hydrate } from "solid-js/web";
     import App from "${componentPath}";
-    hydrate(() => App(), document);
+    hydrate(() => App(JSON.parse(document.querySelector("script#_hydration_prop").innerText)), document);
 `;
 
-export const hydrationConfig = (componentPath: string) => {
+export const hydrationConfig = (entryScript: string) => {
 	return defineConfig({
 		build: {
 			ssr: false,
@@ -58,7 +57,7 @@ export const hydrationConfig = (componentPath: string) => {
 				},
 				plugins: [
 					virtual({
-						entry: hydrationEntryTemplate(componentPath),
+						entry: entryScript,
 					}),
 				],
 			},

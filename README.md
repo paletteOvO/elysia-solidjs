@@ -1,4 +1,4 @@
-# Elysia with SolidJS SSR
+# Elysia with SolidJS SSR/MPA/Hydration
 
 ## Getting Started
 

@@ -1,23 +1,22 @@
 {
-	"name": "elysia-solid",
-	"type": "module",
-	"version": "1.0.50",
-	"scripts": {
-		"vite:build": "bunx --bun vite build",
-		"dev": "bun run dist/index.js"
-	},
-	"dependencies": {
-		"solid-js": "^1.8.17"
-	},
-	"devDependencies": {
-		"@elysiajs/static": "^1.0.2",
-		"@rollup/plugin-alias": "^5.1.0",
-		"@rollup/plugin-virtual": "^3.0.2",
-		"elysia": "latest",
-		"bun-types": "latest",
-		"typescript": "^5.3.3",
-		"vite": "^5.2.10",
-		"vite-plugin-solid": "^2.10.2"
-	},
-	"module": "src/index.js"
+  "name": "elysia-solid",
+  "type": "module",
+  "version": "1.0.50",
+  "scripts": {
+    "vite:build": "bunx --bun vite build",
+    "dev": "bun run dist/index.js"
+  },
+  "dependencies": {
+    "solid-js": "^1.8.17"
+  },
+  "devDependencies": {
+    "@rollup/plugin-alias": "^5.1.0",
+    "@rollup/plugin-virtual": "^3.0.2",
+    "elysia": "latest",
+    "bun-types": "latest",
+    "typescript": "^5.3.3",
+    "vite": "^5.2.10",
+    "vite-plugin-solid": "^2.10.2"
+  },
+  "module": "src/index.js"
 }

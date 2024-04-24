@@ -1,23 +1,31 @@
 import { Elysia } from "elysia";
 
-import { staticPlugin } from "@elysiajs/static";
-
-import elysia_solid from "./elysia_solid";
+import elysiaSolid from "./elysia_solid";
 
 const app = new Elysia()
-	.use(
-		staticPlugin({
-			prefix: "/public",
-			assets: "public",
-			alwaysStatic: true,
-		}),
-	)
-	.use(
-		elysia_solid({
-			prefix: "/",
-			component: (await import("@src/components/App")).default,
-			componentPath: "@src/components/App",
-		}),
+	.use(elysiaSolid)
+	.get(
+		"/",
+		async ({ renderPage }) => {
+			return await renderPage(
+				"@src/pages/index",
+				(await import("@src/pages/index")).default,
+				{
+					blog_list: [
+						{
+							title: "Blog",
+							content: "This is a blog post",
+							date: new Date().toISOString(),
+						},
+					],
+				}
+			);
+		},
+		{
+			afterHandle: async ({ set }) => {
+				set.headers["content-type"] = "text/html; charset=utf8";
+			},
+		},
 	)
 	.listen(3000);
 

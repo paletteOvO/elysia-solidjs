@@ -1,30 +1,44 @@
-import Elysia from "elysia";
+import crypto from "node:crypto";
 
-import App from "@src/components/App";
+import Elysia, { NotFoundError, t } from "elysia";
 
 import { hydratePageScript, renderPage } from "./hydrate";
 import type { JSXElement } from "solid-js";
 
-export default async (route: {
-	prefix: string;
-	componentPath: string;
-	component: (state?: unknown) => JSXElement;
-}) => {
-	const prefix = route.prefix === "/" ? "" : route.prefix;
-	const hydrate_js = await hydratePageScript(route.componentPath);
+const _hydration_script = new Map<string, Promise<string>>();
 
-	return new Elysia().group(prefix, (app) =>
-		app
-			.get(
-				"/",
-				async (context) =>
-					await renderPage(route.component, context),
-				{
-					afterHandle({ response, set }) {
-						set.headers["content-type"] = "text/html; charset=utf8";
-					},
-				},
-			)
-			.get("/_hydrate.js", () => hydrate_js),
+export default new Elysia()
+	.decorate(
+		"renderPage",
+		async <S>(
+			componentPath: string,
+			component: (props: S) => JSXElement,
+			props: S
+		) => {
+			const md5 = crypto.createHash("md5");
+			const hash = md5.update(componentPath).digest("hex");
+			// cache the script for /_hydrate.js
+			if (!_hydration_script.has(hash)) {
+				_hydration_script.set(hash, hydratePageScript(componentPath));
+			}
+			return await renderPage(component, props, hash);
+		},
+	)
+	.get(
+		"/_hydrate.js",
+		async ({ query: { hash } }) => {
+			const hydrationScript = _hydration_script.get(hash);
+			if (!hydrationScript) {
+				throw new NotFoundError();
+			}
+			return await hydrationScript;
+		},
+		{
+			query: t.Object({
+				hash: t.String(),
+			}),
+			afterHandle: async ({ set }) => {
+				set.headers["content-type"] = "application/javascript; charset=utf8";
+			},
+		},
 	);
-};
