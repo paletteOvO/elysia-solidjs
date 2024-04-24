@@ -16,8 +16,7 @@ export const hydratePageScript = async (componentPath: string) => {
 export const renderPage = async <S>(
 	component: (props: S) => JSXElement,
 	props: S,
-	hash?: string,
-	hydrationScript?: string,
+	hash: string,
 ) => {
 	const path = "./index.html";
 	const file = Bun.file(path);
@@ -28,11 +27,7 @@ export const renderPage = async <S>(
 		${generateHydrationScript()}
 		${await renderToStringAsync(() => component(props))}
 		<script id="_hydration_prop" type="application/json">${JSON.stringify(props)}</script>
-		${
-			hash
-				? `<script async src="/_hydrate.js?hash=${hash}" ></script>`
-				: `<script async type="application/javascript">${hydrationScript}</script>`
-		}
+		<script async type="application/javascript">${hydrationScript}</script>
 		`,
 	);
 };
