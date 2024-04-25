@@ -8,8 +8,7 @@ const app = new Elysia()
 		"/",
 		async ({ renderPage }) => {
 			return await renderPage(
-				"@src/pages/index",
-				(await import("@src/pages/index")).default,
+				"index",
 				{
 					blog_list: [
 						{
