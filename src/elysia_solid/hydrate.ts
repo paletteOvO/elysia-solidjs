@@ -22,12 +22,12 @@ export const renderPage = async <S>(
 	const file = Bun.file(path);
 	const text = await file.text();
 	return text.replace(
-		"<!-- body -->",
+		"<!-- app -->",
 		`
 		${generateHydrationScript()}
 		${await renderToStringAsync(() => component(props))}
-		<script id="_hydration_prop" type="application/json">${JSON.stringify(props)}</script>
-		<script async type="application/javascript">${hydrationScript}</script>
+		<script id="_prop" type="application/json">${JSON.stringify(props)}</script>
+		<script async src="/_hydrate.js?hash=${hash}" type="application/javascript"></script>
 		`,
 	);
 };
@@ -35,7 +35,7 @@ export const renderPage = async <S>(
 export const hydrationEntryTemplate = (componentPath: string) => `
     import { hydrate } from "solid-js/web";
     import App from "${componentPath}";
-    hydrate(() => App(JSON.parse(document.querySelector("script#_hydration_prop").innerText)), document);
+    hydrate(() => App(JSON.parse(document.querySelector("script#_prop").innerText)), document.getElementById("app"));
 `;
 
 export const hydrationConfig = (entryScript: string) => {
