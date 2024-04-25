@@ -52,7 +52,7 @@ export default new Elysia()
 			if (!hydrationScript) {
 				throw new NotFoundError();
 			}
-			return await hydrationScript;
+			return await Bun.file(await hydrationScript).text();
 		},
 		{
 			query: t.Object({

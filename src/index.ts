@@ -7,18 +7,15 @@ const app = new Elysia()
 	.get(
 		"/",
 		async ({ renderPage }) => {
-			return await renderPage(
-				"index",
-				{
-					blog_list: [
-						{
-							title: "Blog",
-							content: "This is a blog post",
-							date: new Date().toISOString(),
-						},
-					],
-				}
-			);
+			return await renderPage("index", {
+				blog_list: [
+					{
+						title: "Blog",
+						content: "This is a blog post",
+						date: new Date().toISOString(),
+					},
+				],
+			});
 		},
 		{
 			afterHandle: async ({ set }) => {

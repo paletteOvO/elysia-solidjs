@@ -8,16 +8,20 @@ import { generateHydrationScript, renderToStringAsync } from "solid-js/web";
 import type { JSXElement } from "solid-js";
 import { buildConfig } from "./config";
 
-export const hydratePageScript = async (componentPath: string) => {
+export const hydratePageScript = async (
+	componentPath: string,
+): Promise<string> => {
 	const entryScript = hydrationEntryTemplate(componentPath);
-	return (
-		(await build(
-			buildConfig({
-				entryScript,
-			}),
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		)) as any
-	).output[0].code;
+	return `./dist/${
+		(
+			(await build(
+				buildConfig({
+					entryScript,
+				}),
+				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			)) as any
+		).output[0].fileName
+	}`;
 };
 
 export const renderPage = async <S>(

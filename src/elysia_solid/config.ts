@@ -9,7 +9,7 @@ export const buildConfig = ({
 	entryScript,
 	entryPath,
 	format,
-	ssr
+	ssr,
 }: {
 	ssr?: boolean;
 	entryScript?: string;
@@ -26,16 +26,26 @@ export const buildConfig = ({
 				output: {
 					dir: "dist",
 					format: format ?? "iife",
-					entryFileNames: '[hash].js',
+					entryFileNames: "[hash].js",
 				},
 				plugins: entryScript
 					? [
 							virtual({
 								entry: entryScript,
 							}),
+							alias({
+								entries: [
+									{ find: "@src", replacement: path.join(__dirname, "src") },
+								],
+							}),
 						]
-					: // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-						([] as any),
+					: [
+							alias({
+								entries: [
+									{ find: "@src", replacement: path.join(__dirname, "src") },
+								],
+							}),
+						],
 			},
 		},
 		plugins: [
