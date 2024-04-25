@@ -7,6 +7,7 @@
     "dev": "bun run dist/index.js"
   },
   "dependencies": {
+    "@solidjs/meta": "^0.29.3",
     "solid-js": "^1.8.17"
   },
   "devDependencies": {

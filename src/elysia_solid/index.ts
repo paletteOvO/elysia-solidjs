@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 
 import Elysia, { NotFoundError, t } from "elysia";
 
-import { hydratePageScript, renderPage } from "./hydrate";
+import { hydrateScript, renderPage } from "./hydrate";
 import type { JSXElement } from "solid-js";
 import { build } from "vite";
 import { buildConfig } from "./config";
@@ -40,7 +40,7 @@ export default new Elysia()
 
 		// cache the client side hydrate script for /_hydrate.js
 		if (!_hydrations.has(hash)) {
-			_hydrations.set(hash, hydratePageScript(componentPath));
+			_hydrations.set(hash, hydrateScript(componentPath));
 		}
 
 		return await renderPage(component, props, hash);

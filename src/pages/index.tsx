@@ -1,9 +1,13 @@
 import App from "@src/components/App";
+import { MetaProvider, Title } from "@solidjs/meta";
 
 export default (props: {
-	counter: number
+	counter: number;
 }) => {
 	return (
-		<App counter={props.counter} />
+		<MetaProvider>
+			<Title>Hello Elysia</Title>
+			<App counter={props.counter} />
+		</MetaProvider>
 	);
 };

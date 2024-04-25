@@ -1,17 +1,20 @@
-import { build, defineConfig } from "vite";
-import solidPlugin from "vite-plugin-solid";
-// import devtools from 'solid-devtools/vite';
-import virtual from "@rollup/plugin-virtual";
-import alias from "@rollup/plugin-alias";
-import path from "node:path";
-import { generateHydrationScript, renderToStringAsync } from "solid-js/web";
+import { build } from "vite";
+import { renderToStringAsync } from "solid-js/web";
 import type { JSXElement } from "solid-js";
 import { buildConfig } from "./config";
+import entry from "@src/pages/entry";
+import { MetaProvider } from "@solidjs/meta";
 
-export const hydratePageScript = async (
-	componentPath: string,
-): Promise<string> => {
-	const entryScript = hydrationEntryTemplate(componentPath);
+export const hydrateScript = async (componentPath: string): Promise<string> => {
+	const entryScript = `
+		import { hydrate } from "solid-js/web";
+		import App from "@src/pages/${componentPath}";
+		hydrate(
+			() => 
+				App(JSON.parse(document.getElementById("_prop").innerText)),
+			document.getElementById("app"));
+	`;
+
 	return `./dist/${
 		(
 			(await build(
@@ -29,25 +32,10 @@ export const renderPage = async <S>(
 	props: S,
 	hash: string,
 ) => {
-	const path = "./index.html";
-	const file = Bun.file(path);
-	const text = await file.text();
-	return text.replace(
-		"<!-- app -->",
-		`
-		${generateHydrationScript()}
+	return entry({
+		children: await renderToStringAsync(() => component(props)),
+		scripts: `
 		<script id="_prop" type="application/json">${JSON.stringify(props)}</script>
-		${await renderToStringAsync(() => component(props))}
-		<script async src="/_hydrate.js?hash=${hash}" type="application/javascript"></script>
-		`,
-	);
+		<script async src="/_hydrate.js?hash=${hash}" type="application/javascript"></script>`,
+	});
 };
-
-export const hydrationEntryTemplate = (componentPath: string) => `
-	import { hydrate } from "solid-js/web";
-	import App from "@src/pages/${componentPath}";
-	hydrate(
-		() => 
-			App(JSON.parse(document.getElementById("_prop").innerText)),
-	 	document.getElementById("app"));
-`;
