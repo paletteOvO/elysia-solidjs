@@ -9,7 +9,7 @@ export const hydrateScript = async (componentPath: string): Promise<string> => {
 
 	const entryScript = `
 		import { hydrate } from "solid-js/web";
-		import App from "@src/pages/${componentPath}";
+		import App from "${componentPath}";
 		hydrate(
 			() => 
 				App(JSON.parse(document.getElementById("_prop").innerText)),

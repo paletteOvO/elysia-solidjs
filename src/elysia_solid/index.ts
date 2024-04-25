@@ -16,14 +16,14 @@ const buildComponent = async (
 	const path = (
 		(await build(
 			buildConfig({
-				entryPath: `./src/pages/${componentPath}.tsx`,
+				entryScript: `export { default as App } from "${componentPath}"`,
 				format: "esm",
 				ssr: true,
 			}),
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		)) as any
 	).output[0].fileName;
-	return (await import(`./${path}`)).default;
+	return (await import(`./${path}`)).App;
 };
 
 export default new Elysia()

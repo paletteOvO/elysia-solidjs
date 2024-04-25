@@ -7,7 +7,7 @@ const app = new Elysia()
 	.get(
 		"/",
 		async ({ renderPage }) => {
-			return await renderPage("index", {
+			return await renderPage("@src/pages/index", {
 				counter: 42,
 			} as Parameters<typeof import("@src/pages/index")["default"]>[0])
 		},
