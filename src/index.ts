@@ -8,13 +8,7 @@ const app = new Elysia()
 		"/",
 		async ({ renderPage }) => {
 			return await renderPage("index", {
-				blog_list: [
-					{
-						title: "Blog",
-						content: "This is a blog post",
-						date: new Date().toISOString(),
-					},
-				],
+				counter: 42,
 			});
 		},
 		{

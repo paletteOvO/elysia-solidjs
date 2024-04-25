@@ -1,7 +1,9 @@
 import App from "@src/components/App";
 
-export default () => {
+export default (props: {
+	counter: number
+}) => {
 	return (
-		<App />
+		<App counter={props.counter} />
 	);
 };
