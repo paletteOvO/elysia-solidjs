@@ -9,7 +9,7 @@ const app = new Elysia()
 		async ({ renderPage }) => {
 			return await renderPage("index", {
 				counter: 42,
-			});
+			} as Parameters<typeof import("@src/pages/index")["default"]>[0])
 		},
 		{
 			afterHandle: async ({ set }) => {

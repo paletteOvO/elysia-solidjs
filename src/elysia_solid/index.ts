@@ -27,7 +27,7 @@ const buildComponent = async (
 };
 
 export default new Elysia()
-	.decorate("renderPage", async <S>(componentPath: string, props: S) => {
+	.decorate("renderPage", async (componentPath: string, props: unknown) => {
 		const md5 = crypto.createHash("md5");
 		const hash = md5.update(componentPath).digest("hex");
 
@@ -36,7 +36,7 @@ export default new Elysia()
 			_components.set(hash, await buildComponent(componentPath));
 		}
 
-		const component = _components.get(hash) as (props: S) => JSXElement;
+		const component = _components.get(hash) as (props: unknown) => JSXElement;
 
 		// cache the client side hydrate script for /_hydrate.js
 		if (!_hydrations.has(hash)) {

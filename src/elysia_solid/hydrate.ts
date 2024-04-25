@@ -6,6 +6,7 @@ import entry from "@src/pages/entry";
 import { MetaProvider } from "@solidjs/meta";
 
 export const hydrateScript = async (componentPath: string): Promise<string> => {
+
 	const entryScript = `
 		import { hydrate } from "solid-js/web";
 		import App from "@src/pages/${componentPath}";
