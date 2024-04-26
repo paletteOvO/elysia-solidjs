@@ -1,7 +1,5 @@
 import { createEffect, createSignal } from "solid-js";
 
-const Counter = () => {};
-
 export default (props: {
 	counter: number;
 }) => {
