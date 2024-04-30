@@ -3,15 +3,19 @@ import { Elysia } from "elysia";
 import elysiaSolid from "./elysia_solid";
 
 const app = new Elysia()
-  .use(elysiaSolid)
+  .use(elysiaSolid({
+    components: {
+      "@src/pages/index": (await import("@src/pages/index")).default,
+    },
+  }))
   .get(
     "/",
     async ({ renderPage }) => {
       return await renderPage(
-        import("@src/pages/index"),
-        "@src/pages/index", {
-        counter: 42,
-      })
+        "@src/pages/index",
+        {
+          counter: 42,
+        })
     },
     {
       afterHandle: async ({ set }) => {

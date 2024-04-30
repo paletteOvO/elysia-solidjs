@@ -3,39 +3,50 @@ import crypto from "node:crypto";
 import Elysia, { NotFoundError, t } from "elysia";
 
 import { hydrateScript, renderPage } from "./hydrate";
+
 import type { JSXElement } from "solid-js";
 
 const _hydrations = new Map<string, Promise<string>>();
 
-export default new Elysia()
-  .decorate("renderPage", async<P>(
-    component: Promise<{ "default": (props: P) => JSXElement }>,
-    componentPath: string, props: P) => {
+export default <const C extends Record<string, (props: any) => JSXElement>>(config: {
+  components: C;
+}) => {
+
+  for (const componentPath in config.components) {
     const md5 = crypto.createHash("md5");
     const hash = md5.update(componentPath).digest("hex");
-
-    // cache the client side hydrate script for /_hydrate.js
     if (!_hydrations.has(hash)) {
       _hydrations.set(hash, hydrateScript(componentPath));
     }
+  }
 
-    return await renderPage((await component).default, props, hash);
-  })
-  .get(
-    "/_hydrate.js",
-    async ({ query: { hash } }) => {
-      const hydrationScript = _hydrations.get(hash);
-      if (!hydrationScript) {
-        throw new NotFoundError();
-      }
-      return await Bun.file(await hydrationScript).text();
-    },
-    {
-      query: t.Object({
-        hash: t.String(),
-      }),
-      afterHandle: async ({ set }) => {
-        set.headers["content-type"] = "application/javascript; charset=utf8";
+  return new Elysia()
+    .decorate("renderPage", async<const P extends string>(
+      componentPath: P, props: Parameters<C[P]>[0]) => {
+
+      const component = config.components[componentPath];
+
+      const md5 = crypto.createHash("md5");
+      const hash = md5.update(componentPath).digest("hex");
+
+      return await renderPage(component, props, hash);
+    })
+    .get(
+      "/_hydrate.js",
+      async ({ query: { hash } }) => {
+        const hydrationScript = _hydrations.get(hash);
+        if (!hydrationScript) {
+          throw new NotFoundError();
+        }
+        return await Bun.file(await hydrationScript).text();
       },
-    },
-  );
+      {
+        query: t.Object({
+          hash: t.String(),
+        }),
+        afterHandle: ({ set }) => {
+          set.headers["content-type"] = "application/javascript; charset=utf8";
+        },
+      },
+    );
+}

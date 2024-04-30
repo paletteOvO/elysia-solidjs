@@ -16,13 +16,13 @@ export const hydrateScript = async (componentPath: string): Promise<string> => {
 	`;
 
   return `./dist/${(
-      (await build(
-        buildConfig({
-          entryScript,
-        }),
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      )) as any
-    ).output[0].fileName
+    (await build(
+      buildConfig({
+        entryScript,
+      }),
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    )) as any
+  ).output[0].fileName
     }`;
 };
 
@@ -35,6 +35,6 @@ export const renderPage = async <S>(
     children: await renderToStringAsync(() => component(props)),
     scripts: `
 		<script id="_prop" type="application/json">${JSON.stringify(props)}</script>
-		<script async src="/_hydrate.js?hash=${hash}" type="application/javascript"></script>`,
+		<script async src="/_hydrate.js?hash=${hash}" type="module"></script>`,
   });
 };
