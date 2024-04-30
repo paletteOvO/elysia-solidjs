@@ -21,7 +21,7 @@ export default <const C extends Record<string, (props: any) => JSXElement>>(conf
   }
 
   return new Elysia()
-    .decorate("renderPage", async<const P extends string>(
+    .decorate("renderPage", <const P extends string>(
       componentPath: P, props: Parameters<C[P]>[0]) => {
 
       const component = config.components[componentPath];
@@ -29,7 +29,7 @@ export default <const C extends Record<string, (props: any) => JSXElement>>(conf
       const md5 = crypto.createHash("md5");
       const hash = md5.update(componentPath).digest("hex");
 
-      return await renderPage(component, props, hash);
+      return renderPage(component, props, hash);
     })
     .get(
       "/_hydrate.js",

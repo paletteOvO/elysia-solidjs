@@ -1,5 +1,5 @@
 import { build } from "vite";
-import { renderToStringAsync } from "solid-js/web";
+import { renderToString } from "solid-js/web";
 import type { JSXElement } from "solid-js";
 import { buildConfig } from "./config";
 import entry from "@src/pages/entry";
@@ -26,13 +26,13 @@ export const hydrateScript = async (componentPath: string): Promise<string> => {
     }`;
 };
 
-export const renderPage = async <S>(
+export const renderPage = <S>(
   component: (props: S) => JSXElement,
   props: S,
   hash: string,
 ) => {
   return entry({
-    children: await renderToStringAsync(() => component(props)),
+    children: renderToString(() => component(props)),
     scripts: `
 		<script id="_prop" type="application/json">${JSON.stringify(props)}</script>
 		<script async src="/_hydrate.js?hash=${hash}" type="module"></script>`,
