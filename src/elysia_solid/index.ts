@@ -33,20 +33,19 @@ export default <const C extends Record<string, (props: any) => JSXElement>>(conf
     })
     .get(
       "/_hydrate.js",
-      async ({ query: { hash } }) => {
+      async ({ query: { hash }, set }) => {
         const hydrationScript = _hydrations.get(hash);
         if (!hydrationScript) {
           throw new NotFoundError();
         }
+
+        set.headers["content-type"] = "application/javascript; charset=utf8";
         return await Bun.file(await hydrationScript).text();
       },
       {
         query: t.Object({
           hash: t.String(),
-        }),
-        afterHandle: ({ set }) => {
-          set.headers["content-type"] = "application/javascript; charset=utf8";
-        },
+        })
       },
     );
 }

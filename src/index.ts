@@ -10,18 +10,14 @@ const app = new Elysia()
   }))
   .get(
     "/",
-    async ({ renderPage }) => {
+    async ({ renderPage, set }) => {
+      set.headers["content-type"] = "text/html; charset=utf8";
       return await renderPage(
         "@src/pages/index",
         {
           counter: 42,
         })
-    },
-    {
-      afterHandle: async ({ set }) => {
-        set.headers["content-type"] = "text/html; charset=utf8";
-      },
-    },
+    }
   )
   .listen(3000);
 
