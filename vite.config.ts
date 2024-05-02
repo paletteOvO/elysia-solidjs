@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import solidPlugin from "vite-plugin-solid";
 // import devtools from 'solid-devtools/vite';
 import path from "node:path";
-import alias from "@rollup/plugin-alias";
+import typescript from "@rollup/plugin-typescript";
 
 export default defineConfig({
 	build: {
@@ -11,11 +11,7 @@ export default defineConfig({
 		target: "esnext",
 		rollupOptions: {
 			input: path.join(__dirname, "src/index.ts"),
-			plugins: [
-				alias({
-					entries: [{ find: "@src", replacement: path.join(__dirname, "src") }],
-				}),
-			],
+			plugins: [typescript()],
 		},
 	},
 	plugins: [

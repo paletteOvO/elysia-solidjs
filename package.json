@@ -3,10 +3,12 @@
   "type": "module",
   "version": "1.0.50",
   "scripts": {
+    "check": "bunx --bun tsc --noEmit",
     "vite:build": "bunx --bun vite build",
     "dev": "bun run dist/index.js"
   },
   "dependencies": {
+    "@rollup/plugin-typescript": "^11.1.6",
     "@solidjs/meta": "^0.29.3",
     "solid-js": "^1.8.17"
   },
