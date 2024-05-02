@@ -6,11 +6,10 @@ import typescript from "@rollup/plugin-typescript";
 
 export default defineConfig({
 	build: {
-		ssr: true,
+		ssr: path.join(__dirname, "src/index.ts"),
 		emptyOutDir: true,
 		target: "esnext",
 		rollupOptions: {
-			input: path.join(__dirname, "src/index.ts"),
 			plugins: [typescript()],
 		},
 	},

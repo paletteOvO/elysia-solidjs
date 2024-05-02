@@ -8,15 +8,15 @@
     "dev": "bun run dist/index.js"
   },
   "dependencies": {
-    "@rollup/plugin-typescript": "^11.1.6",
     "@solidjs/meta": "^0.29.3",
     "solid-js": "^1.8.17"
   },
   "devDependencies": {
-    "@rollup/plugin-alias": "^5.1.0",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@rollup/plugin-virtual": "^3.0.2",
-    "elysia": "latest",
     "bun-types": "latest",
+    "elysia": "latest",
+    "tslib": "^2.6.2",
     "typescript": "^5.3.3",
     "vite": "^5.2.10",
     "vite-plugin-solid": "^2.10.2"

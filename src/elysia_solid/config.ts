@@ -4,49 +4,43 @@ import virtual from "@rollup/plugin-virtual";
 import type { ModuleFormat } from "bun";
 import { defineConfig } from "vite";
 import solidPlugin from "vite-plugin-solid";
+import typescript from "@rollup/plugin-typescript";
 
 export const buildConfig = ({
-  entryScript,
-  entryPath,
-  format,
-  ssr,
+	entryScript,
+	format,
 }: {
-  ssr?: boolean;
-  entryScript?: string;
-  entryPath?: string;
-  format?: ModuleFormat;
+	entryScript: string;
+	format?: ModuleFormat;
 }) => {
-  return defineConfig({
-    build: {
-      ssr: ssr ?? false,
-      emptyOutDir: false,
-      target: "esnext",
-      rollupOptions: {
-        input: entryPath ?? "entry",
-        output: {
-          dir: "dist",
-          format: format ?? "es",
-          entryFileNames: "[hash].js",
-        },
-        plugins: entryScript
-          ? [
-            virtual({
-              entry: entryScript,
-            }),
-          ]
-          : [
-          ],
-      },
-    },
-    plugins: [
-      /* 
+	return defineConfig({
+		build: {
+			ssr: false,
+			emptyOutDir: false,
+			rollupOptions: {
+				input: "entry",
+				output: {
+					dir: "dist",
+					format: format ?? "iife",
+					entryFileNames: "[hash].js",
+				},
+				plugins: [
+					virtual({
+						entry: entryScript,
+					}),
+					typescript(),
+				],
+			},
+		},
+		plugins: [
+			/* 
       Uncomment the following line to enable solid-devtools.
       For more info see https://github.com/thetarnav/solid-devtools/tree/main/packages/extension#readme
       */
-      // devtools(),
-      solidPlugin({
-        ssr: true,
-      }),
-    ],
-  });
+			// devtools(),
+			solidPlugin({
+				ssr: true,
+			}),
+		],
+	});
 };
