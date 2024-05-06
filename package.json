@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.3",
+    "glob": "^10.3.12",
     "solid-js": "^1.8.17"
   },
   "devDependencies": {

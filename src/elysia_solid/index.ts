@@ -2,11 +2,11 @@ import crypto from "node:crypto";
 
 import Elysia, { NotFoundError, t } from "elysia";
 
-import { hydrateScript, renderPage } from "./hydrate";
+import { renderPage } from "./hydrate";
 
 import type { JSXElement } from "solid-js";
 
-const _hydrations = new Map<string, Promise<string>>();
+const _hydrations = new Map<string, string>();
 
 export default <
 	const C extends Record<string, (props: any) => JSXElement>,
@@ -17,7 +17,7 @@ export default <
 		const md5 = crypto.createHash("md5");
 		const hash = md5.update(componentPath).digest("hex");
 		if (!_hydrations.has(hash)) {
-			_hydrations.set(hash, hydrateScript(componentPath));
+			_hydrations.set(hash, componentPath);
 		}
 	}
 
@@ -39,13 +39,13 @@ export default <
 		.get(
 			"/_hydrate.js",
 			async ({ query: { hash }, set }) => {
-				const hydrationScript = _hydrations.get(hash);
-				if (!hydrationScript) {
+				const componentPath = _hydrations.get(hash);
+				if (!componentPath) {
 					throw new NotFoundError();
 				}
 
 				set.headers["content-type"] = "application/javascript; charset=utf8";
-				return await Bun.file(await hydrationScript).text();
+				return Bun.file(`${__dirname}/hydrate-pages/${componentPath}.js`);
 			},
 			{
 				query: t.Object({
