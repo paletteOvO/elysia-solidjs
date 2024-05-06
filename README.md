@@ -3,8 +3,11 @@
 ## Getting Started
 
 ```bash
-# build
-bun vite:build
+# build 
+bun vite:build:client
+
+bun vite:build:server
+
 # run
 bun run dist/index.js
 ```

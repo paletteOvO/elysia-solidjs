@@ -4,8 +4,9 @@
   "version": "1.0.50",
   "scripts": {
     "check": "bunx --bun tsc --noEmit",
-    "vite:build": "bunx --bun vite build",
-    "dev": "bun run dist/index.js"
+    "vite:build:server": "bunx --bun vite build",
+    "vite:build:client": "bunx --bun vite build -c vite.client.config.ts",
+    "serve": "bun run dist/index.js"
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.3",
