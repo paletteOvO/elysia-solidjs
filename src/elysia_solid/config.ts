@@ -1,10 +1,7 @@
-import alias from "@rollup/plugin-alias";
-import path from "node:path";
 import virtual from "@rollup/plugin-virtual";
 import type { ModuleFormat } from "bun";
 import { defineConfig } from "vite";
 import solidPlugin from "vite-plugin-solid";
-import typescript from "@rollup/plugin-typescript";
 
 export const buildConfig = ({
 	entryScript,
@@ -28,7 +25,6 @@ export const buildConfig = ({
 					virtual({
 						entry: entryScript,
 					}),
-					typescript(),
 				],
 			},
 		},

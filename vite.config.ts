@@ -1,8 +1,6 @@
 import { defineConfig } from "vite";
 import solidPlugin from "vite-plugin-solid";
-// import devtools from 'solid-devtools/vite';
 import path from "node:path";
-import typescript from "@rollup/plugin-typescript";
 
 export default defineConfig({
 	build: {
@@ -10,7 +8,7 @@ export default defineConfig({
 		emptyOutDir: true,
 		target: "esnext",
 		rollupOptions: {
-			plugins: [typescript()],
+			plugins: [],
 		},
 	},
 	plugins: [

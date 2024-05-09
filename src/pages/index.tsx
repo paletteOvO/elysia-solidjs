@@ -1,4 +1,4 @@
-import App from "@src/components/App";
+import App from "../components/App";
 import { MetaProvider, Title } from "@solidjs/meta";
 
 export default (props: {
