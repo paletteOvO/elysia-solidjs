@@ -1,23 +1,17 @@
 import { Elysia } from "elysia";
 
-import elysiaSolid from "./elysia_solid";
-
-import IndexPage from "../src/pages/index";
+import solid from "./elysia_solid";
 
 const app = new Elysia()
 	.use(
-		elysiaSolid({
-			components: {
-				"./src/pages/index": IndexPage,
-			},
+		solid({
+			prefix: "/",
+			router: [
+				"/",
+				"/counter",
+			]
 		}),
 	)
-	.get("/", ({ renderPage, set }) => {
-		set.headers["content-type"] = "text/html; charset=utf8";
-		return renderPage("./src/pages/index", {
-			counter: 42,
-		});
-	})
 	.listen(3000);
 
 console.log(

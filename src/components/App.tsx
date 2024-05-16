@@ -1,21 +1,12 @@
+import { A } from "@solidjs/router";
 import { createEffect, createSignal } from "solid-js";
 
-export default (props: {
-	counter: number;
-}) => {
-	const [count, setCount] = createSignal(props.counter);
-	const increment = () => setCount((count) => count + 1);
-
-	createEffect(() => {
-		console.log("Hi");
-	});
+export default () => {
 
 	return (
 		<div>
 			Hello Solid/Elysia
-			<button type="button" onClick={increment}>
-				{count()}
-			</button>
+			<A href="/counter">Counter</A>
 		</div>
 	);
 };

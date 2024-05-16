@@ -1,13 +1,24 @@
-import App from "../components/App";
-import { MetaProvider, Title } from "@solidjs/meta";
+import { MetaProvider } from "@solidjs/meta";
+import { Route, Router } from "@solidjs/router";
+import { isServer } from "solid-js/web";
+import { Suspense, lazy } from "solid-js";
 
-export default (props: {
-	counter: number;
-}) => {
+const App = lazy(() => import("@src/components/App"));
+const Counter = lazy(() => import("@src/components/Counter"));
+
+export default ({
+	url,
+}: {
+	url?: string;
+} = {}) => {
 	return (
 		<MetaProvider>
-			<Title>Hello Elysia</Title>
-			<App counter={props.counter} />
+			<Suspense>
+				<Router url={isServer ? url : ""}>
+					<Route path={"/"} component={App} />
+					<Route path={"/counter"} component={Counter} />
+				</Router>
+			</Suspense>
 		</MetaProvider>
 	);
 };

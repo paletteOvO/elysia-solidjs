@@ -5,7 +5,6 @@ import solidPlugin from "vite-plugin-solid";
 
 export const buildConfig = ({
 	entryScript,
-	format,
 }: {
 	entryScript: string;
 	format?: ModuleFormat;
@@ -16,10 +15,16 @@ export const buildConfig = ({
 			emptyOutDir: false,
 			rollupOptions: {
 				input: "entry",
+				preserveEntrySignatures: "exports-only",
 				output: {
-					dir: "dist",
-					format: format ?? "iife",
-					entryFileNames: "[hash].js",
+					paths: (id): string => {
+						console.log(id)
+						return `/_hydrate/${id}`;
+					},
+					preserveModules: true,
+					dir: "dist/_hydrate/",
+					format: "esm",
+					entryFileNames: "chunked-[hash].js",
 				},
 				plugins: [
 					virtual({
