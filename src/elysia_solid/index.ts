@@ -56,11 +56,7 @@ export default <const P extends string>({
 
 			const entryScript = _entry_scripts.get(hash);
 			return entry({
-				children: await renderToStringAsync(() => index({ url }), {
-					// not sure if the script is needed, just delete it when neccessary
-					// @ts-ignore
-					noScripts: true,
-				}),
+				children: await renderToStringAsync(() => index({ url }), {}),
 				scripts: `<script async src="/_hydrate/${entryScript}" type="module"></script>`,
 				assets: `${getAssets()}${generateHydrationScript()}`,
 			});

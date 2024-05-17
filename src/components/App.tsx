@@ -1,9 +1,9 @@
-import { A } from "@solidjs/router";
+import { A, createAsync } from "@solidjs/router";
 import { eden } from "@src/services/eden";
-import { Show, createResource, useContext } from "solid-js";
+import { Show } from "solid-js";
 
 export default () => {
-	const [data] = createResource(async () => (await eden().api.hello.get()).data);
+	const data = createAsync(async () => (await eden().api.hello.get()).data);
 
 	return (
 		<div>
