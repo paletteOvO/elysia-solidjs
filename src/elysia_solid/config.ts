@@ -17,10 +17,6 @@ export const buildConfig = ({
 				input: "entry",
 				preserveEntrySignatures: "exports-only",
 				output: {
-					paths: (id): string => {
-						console.log(id)
-						return `/_hydrate/${id}`;
-					},
 					preserveModules: true,
 					dir: "dist/_hydrate/",
 					format: "esm",
@@ -30,6 +26,21 @@ export const buildConfig = ({
 					virtual({
 						entry: entryScript,
 					}),
+					virtual({
+						"@void": "export default undefined",
+					}),
+					{
+						name: "replace-import",
+						transform(code, id) {
+							return {
+								code: code.replace(
+									/import (.*?) from ".*?.server"/g,
+									'import $1 from "@void"',
+								),
+								map: null,
+							};
+						},
+					},
 				],
 			},
 		},

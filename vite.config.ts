@@ -13,9 +13,7 @@ export default defineConfig({
 		emptyOutDir: true,
 		target: "esnext",
 		modulePreload: false,
-		rollupOptions: {
-			plugins: [],
-		},
+		rollupOptions: {},
 	},
 	plugins: [
 		/* 
