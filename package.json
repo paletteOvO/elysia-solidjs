@@ -8,6 +8,7 @@
     "dev": "bun run dist/index.js"
   },
   "dependencies": {
+    "@elysiajs/eden": "^1.0.13",
     "@solidjs/meta": "^0.29.3",
     "@solidjs/router": "^0.13.3",
     "solid-js": "^1.8.17"
@@ -15,7 +16,7 @@
   "devDependencies": {
     "@rollup/plugin-virtual": "^3.0.2",
     "bun-types": "latest",
-    "elysia": "latest",
+    "elysia": "^1.0.20",
     "typescript": "^5.3.3",
     "vite": "^5.2.10",
     "vite-plugin-solid": "^2.10.2"

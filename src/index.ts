@@ -1,6 +1,7 @@
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
 
 import solid from "./elysia_solid";
+import { treaty } from "@elysiajs/eden";
 
 export const app = new Elysia()
 	.use(
@@ -16,6 +17,10 @@ export const app = new Elysia()
 		};
 	})
 	.listen(3000);
+
+export type App = typeof app;
+
+export const eden = treaty<App>(app);
 
 console.log(
 	`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
