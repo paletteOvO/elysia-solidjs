@@ -7,7 +7,6 @@ import index from "@src/pages/index";
 import {
 	generateHydrationScript,
 	getAssets,
-	renderToString,
 	renderToStringAsync,
 } from "solid-js/web";
 

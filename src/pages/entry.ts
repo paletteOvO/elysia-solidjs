@@ -1,5 +1,3 @@
-import { generateHydrationScript, getAssets } from "solid-js/web";
-
 export default ({
 	children,
 	scripts,
