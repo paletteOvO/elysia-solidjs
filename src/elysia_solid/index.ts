@@ -10,7 +10,12 @@ import {
 	renderToStringAsync,
 } from "solid-js/web";
 
-export const hydrateScript = async (): Promise<(readonly [string, string])[]> => {
+export const client_manifest = async (): Promise<{
+	entry_script: [string, string][];
+	entry_style: [string, string][];
+	lazy_script: [string, string][];
+	lazy_style: [string, string][];
+}> => {
 	const manifest = (await Bun.file(
 		"./dist/_hydrate/.vite/manifest.json",
 	).json()) as Record<
@@ -21,25 +26,50 @@ export const hydrateScript = async (): Promise<(readonly [string, string])[]> =>
 			src: string;
 			isDynamicEntry?: boolean;
 			imports: string[];
-			isEntry?: boolean,
-			dynamicImports: string[]
+			isEntry?: boolean;
+			dynamicImports: string[];
+			css?: string[];
 		}
 	>;
-	const entry = Object.values(manifest).filter((x) => x.isEntry === true)
-	const lazy_script = Object.values(manifest).filter((x) => x.isEntry !== true)
-	const css_assets = Object.values(manifest).filter((x) => x.file.endsWith(".css"))
-	const ret = await Promise.all([
-		...entry,
-		...lazy_script,
-		...css_assets
-	].map(async (x) => {
-		return [
-			x.file,
-			await Bun.file(`./dist/_hydrate/${x.file}`).text()
-		] as const
-	}))
-
-	return ret;
+	const entry_script = Object.values(manifest)
+		.filter((x) => x.isEntry === true)
+		.map(async (x) => {
+			return [x.file, await Bun.file(`./dist/_hydrate/${x.file}`).text()] as [
+				string,
+				string,
+			];
+		});
+	const entry_style = Object.values(manifest)
+		.filter((x) => x.isEntry === true)
+		.flatMap((x) => x.css ?? [])
+		.map(async (x) => {
+			return [x, await Bun.file(`./dist/_hydrate/${x}`).text()] as [
+				string,
+				string,
+			];
+		});
+	const lazy_script = Object.values(manifest)
+		.filter((x) => x.isEntry !== true)
+		.map(async (x) => {
+			return [x.file, await Bun.file(`./dist/_hydrate/${x.file}`).text()] as [
+				string,
+				string,
+			];
+		});
+	const lazy_assets = Object.values(manifest)
+		.flatMap((x) => x.css ?? [])
+		.map(async (x) => {
+			return [x, await Bun.file(`./dist/_hydrate/${x}`).text()] as [
+				string,
+				string,
+			];
+		});
+	return {
+		entry_script: await Promise.all(entry_script),
+		entry_style: await Promise.all(entry_style),
+		lazy_script: await Promise.all(lazy_script),
+		lazy_style: await Promise.all(lazy_assets),
+	};
 };
 
 export default async <const P extends string>({
@@ -49,18 +79,19 @@ export default async <const P extends string>({
 	prefix: P;
 	router: string[];
 }) => {
-	const _hydrate_scripts = await hydrateScript();
+	const manifest = await client_manifest();
 
-	const app = new Elysia({ prefix: prefix === "/" ? "" : prefix })
-		.decorate("render", async (url: string) => {
-			const entryScript = _hydrate_scripts[0];
-
+	const app = new Elysia({ prefix: prefix === "/" ? "" : prefix }).decorate(
+		"render",
+		async (url: string) => {
+			const stylesheet = manifest.entry_style.map(x => x[1]).join("")
 			return entry({
 				children: await renderToStringAsync(() => index({ url }), {}),
-				scripts: `<script async src="/_hydrate/${entryScript[0]}" type="module"></script>`,
-				assets: `${getAssets()}${generateHydrationScript()}`,
+				scripts: `<script async src="/_hydrate/${manifest.entry_script[0][0]}" type="module"></script>`,
+				assets: `<style>${stylesheet}</style>${getAssets()}${generateHydrationScript()}`,
 			});
-		});
+		},
+	);
 
 	for (const route of router) {
 		app.get(route, ({ render, request, set }) => {
@@ -69,9 +100,23 @@ export default async <const P extends string>({
 		});
 	}
 
-	for (const [path, code] of _hydrate_scripts) {
+	for (const [path, code] of manifest.entry_script) {
 		app.get(`/_hydrate/${path}`, async ({ set }) => {
 			set.headers["content-type"] = "application/javascript; charset=utf8";
+			return code;
+		});
+	}
+
+	for (const [path, code] of manifest.lazy_script) {
+		app.get(`/_hydrate/${path}`, async ({ set }) => {
+			set.headers["content-type"] = "application/javascript; charset=utf8";
+			return code;
+		});
+	}
+
+	for (const [path, code] of manifest.lazy_style) {
+		app.get(`/${path}`, async ({ set }) => {
+			set.headers["content-type"] = "text/css; charset=utf8";
 			return code;
 		});
 	}

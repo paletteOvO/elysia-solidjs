@@ -21,6 +21,7 @@ export default defineConfig({
 			output: {
 				dir: "dist/_hydrate/",
 				format: "esm",
+				assetFileNames: "_assets/styled-[hash][extname]",
 				chunkFileNames: "chunked-[hash].js",
 				entryFileNames: "entry-[hash].js",
 			},
