@@ -4,9 +4,9 @@
 
 ```bash
 # build
-bun vite:build
+bun run build
 # run
-bun run dist/index.js
+bun run dist/server/index.js
 ```
 
 Open http://localhost:3000/ with your browser to see the result.
