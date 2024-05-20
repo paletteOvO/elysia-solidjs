@@ -4,7 +4,9 @@
   "version": "1.0.50",
   "scripts": {
     "check": "bunx --bun tsc --noEmit",
+    "build": "bun run vite:build && bun run vite:build:client",
     "vite:build": "bunx --bun vite build",
+    "vite:build:client": "bunx --bun vite build -c vite.client.config.ts",
     "dev": "bun run dist/index.js"
   },
   "dependencies": {
@@ -21,5 +23,5 @@
     "vite": "^5.2.10",
     "vite-plugin-solid": "^2.10.2"
   },
-  "module": "src/index.js"
+  "module": "src/index.ts"
 }

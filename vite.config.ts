@@ -1,6 +1,5 @@
 import { defineConfig } from "vite";
 import solidPlugin from "vite-plugin-solid";
-import path from "node:path";
 
 export default defineConfig({
 	resolve: {
@@ -9,17 +8,18 @@ export default defineConfig({
 		},
 	},
 	build: {
-		ssr: path.join(__dirname, "src/index.ts"),
+		ssr: true,
+		rollupOptions: {
+			input: "src/index.ts",
+			output: {
+				dir: "dist/server/",
+			},
+		},
 		emptyOutDir: true,
 		target: "esnext",
 		modulePreload: false,
-		rollupOptions: {},
 	},
 	plugins: [
-		/* 
-    Uncomment the following line to enable solid-devtools.
-    For more info see https://github.com/thetarnav/solid-devtools/tree/main/packages/extension#readme
-    */
 		// devtools(),
 		solidPlugin({
 			ssr: true,
